@@ -3,10 +3,10 @@ var grid = [];
 var litterArrayLocations = [];
 var roverX;
 var roverY;
+var width = 29;
+var height = 29;
 
 function sender(io) {
-<<<<<<< HEAD
-=======
 	//test roverPath
 	//test comment
 	var scanRadius = 0;
@@ -25,7 +25,6 @@ function sender(io) {
 		{posx: 6, posy:1},
 	]
 
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 	//When a client connect display message on console
 	io.on('connection', function(socket){
 	  console.log('a user connected');
@@ -41,13 +40,6 @@ function sender(io) {
 				socket.emit('rover-frontEnd', path);
 			}
 		});
-<<<<<<< HEAD
-		socket.on('grid-channel', function(data) {
-			grid = data.grid;
-			litterArrayLocations = data.litter;
-			console.log(litterArrayLocations);
-		})
-=======
 
 		//receive the location of the drone and send back the path
 		socket.on('drone-frontEnd', function(data) {
@@ -57,59 +49,89 @@ function sender(io) {
 
 			console.log('routinePath start work!');
 			console.log('Direction: '+direction);
-			var nextLocation = routinePath(data.coordinates.posx, data.coordinates.posy, scanRadius, direction);
-			this.direction = nextLocation.direction;
-			socket.emit('drone-frontEnd', nextLocation);
+			routinePath(data.coordinates.posx, data.coordinates.posy, scanRadius, direction, socket);
+			//this.direction = nextLocation.direction;
+			//socket.emit('drone-frontEnd', nextLocation);
 		});
 
 		// receive
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 	});
 }
 
-function routinePath(posx, posy, scanRadius, direction) {
-	//how to know the size of the map?
-	// for test
+function routinePath(posx, posy, scanRadius, direction, socket) {
+	//Really shitty design rn. need to fix it up and change implementation but at least it works? :D
 
-	//var width = grid.length;
-	//var height = grid[0].length;
-
-	var width = 100;
-	var height = 100;
 	console.log('from server: '+posx+'-'+posy);
+	while(posx != width && posy != height){
 
+		while(direction == 1){
+			if(posx == width)
+			{
+				direction = 0;
+			}
 
-	if (posx == width || (posx == 0 && posy != 0)) {
+			posx = moveRight(posx, posy, scanRadius);
+			var data = {coordinates: {posx:posx, posy:posy},
+				direction: direction}
+				socket.emit('drone-frontEnd', data);
+			}
 
-		if (posx == width) {
-			direction = 0;
-		}
-		else{
-			direction = 1;
-		}
-		if (posy != height) {
-			posy += 2*scanRadius;
-		}
+			posy = moveDown(posx, posy, scanRadius);
+			var data = {coordinates: {posx:posx, posy:posy},
+				direction: direction}
+				socket.emit('drone-frontEnd', data);
+
+				while(direction == 0){
+					if(posx == 0)
+					{
+						direction = 1;
+					}
+					posx = moveLeft(posx, posy, scanRadius);
+
+					var data = {coordinates: {posx:posx, posy:posy},
+					direction: direction}
+					socket.emit('drone-frontEnd', data);
+				}
+
+				posy = moveDown(posx, posy, scanRadius);
+				var data = {coordinates: {posx:posx, posy:posy},
+					direction: direction}
+					socket.emit('drone-frontEnd', data);
+				}
+			}
+
+function moveRight(posx, posy, scanRadius){
+	if((width - posx) > scanRadius)
+	{
+		posx += scanRadius;
 	}
-	else {
-		if (direction == 0) {
-			posx -= scanRadius;
-		}
-		else {
-			posx += scanRadius;
-		}
+	else{
+		posx += (width-posx);
 	}
-
-	var data = {coordinates: {posx:posx, posy:posy},
-		direction: direction}
-	return data;
+	return posx;
 }
 
+function moveDown(posx, posy, scanRadius){
+	if (posy != height) {
+		if((height - posy) > (2*scanRadius))
+		{
+			posy += 2*scanRadius;
+		}
+		else {
+			posy += (height-posy);
+		}
+	}
+	return posy;
+}
 
-
-
-
-
-
-
+function moveLeft(posx, posy, scanRadius){
+	if((posx) > scanRadius)
+	{
+		posx -= scanRadius;
+	}
+	else{
+		posx -= posx;
+	}
+	return posx;
+}
 module.exports = sender;

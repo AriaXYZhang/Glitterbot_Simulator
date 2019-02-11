@@ -25,20 +25,10 @@ class DroneSprite {
 		this.scanRadius = 5;
 
 		this.searchLitter = this.searchLitter.bind(this);
+		this.waiting = true;
 	}
 
 	//TODO boundry system!
-<<<<<<< HEAD
-	moveTo(targetX, targetY) {
-		var distanceSquared = ((this.posx-targetX)^2) + ((this.posy-targetY)^2);
-		distanceSquared = Math.abs(distanceSquared);
-    var distance = Math.sqrt(distanceSquared);
-		var time = distance/this.animSpeed;
-		this.droneTimeline.to(this.sprite, time, {x:this.squareSize*targetX, y:this.squareSize*targetY});
-		this.posx = targetX;
-		this.posy = targetY;
-		console.log("Drone: " +this.posx+"-"+this.posy);
-=======
 	moveTo(position) {
 
 			var targetX = position.coordinates.posx;
@@ -57,7 +47,6 @@ class DroneSprite {
 			// send the location of drone to the rendermap
 			socket.emit('drone-backEnd', {coordinates: {posx:this.posx, posy:this.posy},
 				scanRadius: this.scanRadius} );
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 	}
 
 	//A function that make the drone search litter in the surrounding area
@@ -76,7 +65,7 @@ class DroneSprite {
 				}
 			}
 		}
-	
+
 */
 }
 

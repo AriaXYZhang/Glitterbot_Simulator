@@ -2,7 +2,7 @@ const socket = io();
 
 class MapRenderer {
 	constructor(container) {
-		this.row = 20;
+		this.row = 30;
 		this.col = 30;
 		this.container = container;
 		this.squareSize = 20;
@@ -14,12 +14,6 @@ class MapRenderer {
 		this.litterTexture = PIXI.Texture.fromImage('./sprites/litter.png');
 		this.roverSprite = null;
 		this.droneSprite = null;
-<<<<<<< HEAD
-		this.addLitter = this.addLitter.bind(this);
-		this.drawGrid = this.drawGrid.bind(this);
-		this.removeLitter = this.removeLitter.bind(this);
-=======
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 		this.moveDrone = this.moveDrone.bind(this);
 	}
 
@@ -45,13 +39,7 @@ class MapRenderer {
 				this.litterArrayLocations[i][j] = 0;//no litter
 			}
 		}
-<<<<<<< HEAD
-		this.roverSprite = new RoverSprite(this.container, this.squareSize, this);
-		this.droneSprite = new DroneSprite(this.squareSize, this.container);
-		//Sending grid array and litter array, to delete in the future
-		socket.emit('grid-channel', {grid: this.grid, litter: this.litterArrayLocations});
-=======
-		this.roverSprite = new RoverSprite(this.grid, this.container, this.squareSize, this.litterArray);
+		this.roverSprite = new RoverSprite(this.container, this.squareSize, this.litterArray);
 		this.droneSprite = new DroneSprite(this.row, this.col, this.grid, this.squareSize, this.container);
 		//test
 		var litterSprite = new PIXI.Sprite(this.litterTexture);
@@ -64,7 +52,6 @@ class MapRenderer {
 		// test drone
 		//this.droneSprite.moveTo(10,0);
 
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 	}
 
 	addLitter() {
@@ -100,16 +87,10 @@ class MapRenderer {
 		this.roverSprite.followPath(path);
 	}
 
-<<<<<<< HEAD
-	moveDrone(x, y) {
-		this.droneSprite.moveTo(x, y);
-	}
-=======
 	moveDrone(position) {
 		this.droneSprite.moveTo(position);
 	}
 
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 }
 
 
@@ -125,15 +106,6 @@ function startRoutine(m) {
 		scanRadius: m.droneSprite.scanRadius});
 
 	console.log("sending to the server");
-<<<<<<< HEAD
-	setTimeout(startRoutine, 5000, m);
-}
-
-function setButtons(mapRenderer) {
-	//Linking the litter generations button to the addLitter method
-	const genLitterBtn = document.getElementById("litterBtn");
-	genLitterBtn.addEventListener('click', mapRenderer.addLitter);
-=======
 
 	socket.on('rover-frontEnd', function(data) {
 		m.moveRover(data);
@@ -141,25 +113,16 @@ function setButtons(mapRenderer) {
 
 	console.log("sending drone location to the server");
 	// receive scanning path from the server
-
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 }
 
 function main() {
 	const mapRenderer = new MapRenderer(container);
 	mapRenderer.drawGrid();
-<<<<<<< HEAD
-	setButtons(mapRenderer);
-	startRoutine(mapRenderer);
-	socket.on('rover-frontEnd', function(data) {
-		console.log(data);
-		mapRenderer.moveRover(data);
-	});
-=======
 
 	//setInterval();
 
 	startRoutine(mapRenderer);
+
 	socket.on('drone-frontEnd', function(data) {
 		mapRenderer.moveDrone(data);
 	});
@@ -169,7 +132,6 @@ function main() {
 		socket.emit('drone-frontEnd', data);
 	});
 
->>>>>>> d2e60b32d96650ee9a608181e34d86a94934408b
 }
 
 document.addEventListener('DOMContentLoaded', main);
